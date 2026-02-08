@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: surveillance-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        value: sqlite:///surveillance.db
+      - key: EMAIL_SENDER
+        value: adabbawa10@gmail.com
+      - key: EMAIL_PASSWORD
+        value: ccgfdsohymdvgixw
+      - key: EMAIL_RECEIVER
+        value: adabbawa06@gmail.com

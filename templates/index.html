@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Surveillance</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="top-bar">
+    <h2>Surveillance System - Video Processing</h2>
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <input type="file" id="videoUpload" accept="video/*">
+        <button onclick="uploadVideo()">Upload & Process Video</button>
+        <a href="/database" style="padding: 8px 16px; background: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">View Database</a>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Video Area -->
+    <div class="video-panel">
+        <img src="/video_feed" id="videoStream">
+    </div>
+
+    <!-- Analytics Area -->
+    <div class="analytics-panel">
+        <h3>Analytics (ResNet)</h3>
+        <pre id="analytics"></pre>
+    </div>
+</div>
+
+<script>
+function uploadVideo() {
+    let file = document.getElementById("videoUpload").files[0];
+    if (!file) {
+        alert("Please select a video file first");
+        return;
+    }
+    
+    let formData = new FormData();
+    formData.append("file", file);
+
+    // Show loading message
+    let statusMsg = document.createElement("div");
+    statusMsg.id = "uploadStatus";
+    statusMsg.style.cssText = "padding: 10px; background: #2196F3; color: white; margin: 10px 0; border-radius: 4px;";
+    statusMsg.textContent = "Uploading video... Please wait.";
+    document.querySelector(".top-bar").appendChild(statusMsg);
+
+    fetch("/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        statusMsg.style.background = "#4CAF50";
+        statusMsg.textContent = "Video uploaded successfully! Processing will start automatically.";
+        setTimeout(() => {
+            statusMsg.remove();
+        }, 3000);
+    })
+    .catch(err => {
+        statusMsg.style.background = "#f44336";
+        statusMsg.textContent = "Error uploading video: " + err.message;
+    });
+}
+
+setInterval(() => {
+    fetch("/analytics")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("analytics").innerText =
+                JSON.stringify(data, null, 2);
+        });
+}, 1000);
+</script>
+
+</body>
+</html>
