@@ -21,6 +21,7 @@ facenet-pytorch==2.5.2
 ultralytics>=8.0.0,<8.1.0  # YOLOv8 (versions 8.0.x require Python <=3.11, which matches our runtime.txt)
 deep-sort-realtime  # DeepSORT tracking (no version constraint - let pip find compatible version)
 transformers==4.35.2  # For Mask2Former (optional - can be disabled if needed)
+faiss-cpu  # FAISS for face embedding similarity search (CPU version for server)
 
 # Database
 SQLAlchemy>=2.0.0,<2.1.0  # Use stable 2.0.x version (2.1.2 doesn't exist)
