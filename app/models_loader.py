@@ -22,12 +22,12 @@ def load_all_models():
     Required models (will raise exception if not available):
     - YOLO: Object detection
     - DeepSORT: Multi-object tracking
-    - Mask2Former: Semantic segmentation
     - ResNet: Scene feature extraction
     - MTCNN: Face detection
     - FaceNet: Face embedding generation
     
     Optional models (can be None if not available):
+    - Mask2Former: Semantic segmentation (optional - scene understanding works without it)
     - Zero-DCE: Low-light enhancement
     - GAN: Face super-resolution
     
@@ -35,7 +35,7 @@ def load_all_models():
         dict: Dictionary containing all loaded models with keys:
             - "yolo": YOLOv8 model
             - "deepsort": DeepSORT tracker
-            - "mask2former": Tuple of (model, processor)
+            - "mask2former": Tuple of (model, processor) or None if not available
             - "resnet": ResNet model
             - "mtcnn": MTCNN face detector
             - "facenet": FaceNet model
@@ -65,11 +65,13 @@ def load_all_models():
         print(f"ERROR: Failed to load DeepSORT: {e}")
         raise
     
+    # Mask2Former is optional (can be None if not available)
     try:
         models["mask2former"] = load_mask2former()
     except Exception as e:
-        print(f"ERROR: Failed to load Mask2Former: {e}")
-        raise
+        print(f"WARNING: Failed to load Mask2Former: {e}")
+        print("Continuing without Mask2Former - scene segmentation will be disabled")
+        models["mask2former"] = None
     
     try:
         models["resnet"] = load_resnet()

@@ -16,25 +16,30 @@ def run_scene_models(frame, mask2former_model, mask2former_processor, resnet, de
     
     Args:
         frame: BGR frame (OpenCV format)
-        mask2former_model: Mask2Former model
-        mask2former_processor: Mask2Former processor
+        mask2former_model: Mask2Former model (optional, can be None)
+        mask2former_processor: Mask2Former processor (optional, can be None)
         resnet: ResNet model
         device: Device to run on
     
     Returns:
-        Dictionary with scene_features and segmentation
+        Dictionary with scene_features and segmentation (if available)
     """
     with torch.no_grad():
         # Convert BGR to RGB
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         pil_image = Image.fromarray(rgb_frame)
         
-        # Process with Mask2Former
-        inputs = mask2former_processor(images=pil_image, return_tensors="pt")
-        inputs = {k: v.to(device) for k, v in inputs.items()}
-        
-        # Mask2Former forward pass
-        outputs = mask2former_model(**inputs)
+        # Process with Mask2Former (if available)
+        mask2former_outputs = None
+        if mask2former_model is not None and mask2former_processor is not None:
+            try:
+                inputs = mask2former_processor(images=pil_image, return_tensors="pt")
+                inputs = {k: v.to(device) for k, v in inputs.items()}
+                # Mask2Former forward pass
+                mask2former_outputs = mask2former_model(**inputs)
+            except Exception as e:
+                print(f"Warning: Mask2Former processing failed: {e}")
+                mask2former_outputs = None
         
         # ResNet for scene features
         # Preprocess for ResNet
@@ -53,8 +58,12 @@ def run_scene_models(frame, mask2former_model, mask2former_processor, resnet, de
         
         scene_features = scene_features.cpu().numpy()
 
-    return {
-        "scene_features": scene_features,
-        "segmentation": outputs,
-        "mask2former_output": outputs
+    result = {
+        "scene_features": scene_features
     }
+    
+    if mask2former_outputs is not None:
+        result["segmentation"] = mask2former_outputs
+        result["mask2former_output"] = mask2former_outputs
+    
+    return result

@@ -76,26 +76,36 @@ def process_frame(frame, models, camera_id="CAM_01", frame_count=0, db_people=No
                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
     
     # ==========================================
-    # 5️⃣ Mask2Former (scene / zone semantics)
+    # 5️⃣ Mask2Former (scene / zone semantics) - Optional
     # 6️⃣ ResNet (scene / object context features)
     # ==========================================
     # Run heavy models every 15 frames for performance
     if frame_count % 15 == 0:
-        mask2former_model, mask2former_processor = models["mask2former"]
         resnet = models["resnet"]
+        mask2former = models.get("mask2former", None)
         
-        scene_features = run_scene_models(
-            frame, 
-            mask2former_model, 
-            mask2former_processor,
-            resnet, 
-            device
-        )
-        
-        # Display scene info on frame
-        scene_text = f'Scene Features: {len(scene_features.get("scene_features", []))} dims'
-        cv2.putText(output_frame, scene_text, (10, 30),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+        # Only run scene models if ResNet is available
+        if resnet is not None:
+            mask2former_model = None
+            mask2former_processor = None
+            
+            if mask2former is not None:
+                mask2former_model, mask2former_processor = mask2former
+            
+            scene_features = run_scene_models(
+                frame, 
+                mask2former_model, 
+                mask2former_processor,
+                resnet, 
+                device
+            )
+            
+            # Display scene info on frame
+            scene_text = f'Scene Features: {len(scene_features.get("scene_features", []))} dims'
+            if mask2former is None:
+                scene_text += " (Mask2Former disabled)"
+            cv2.putText(output_frame, scene_text, (10, 30),
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
     
     # ==========================================
     # 7️⃣ Face Pipeline (ONLY if class == person)

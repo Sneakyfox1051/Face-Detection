@@ -20,7 +20,7 @@ timm==0.9.8
 facenet-pytorch==2.5.2
 ultralytics==8.0.152  # YOLOv8 latest
 deepsort-realtime==1.6.6
-mask2former @ git+https://github.com/facebookresearch/Mask2Former.git@main
+transformers==4.35.2  # For Mask2Former (optional - can be disabled if needed)
 
 # Database
 SQLAlchemy==2.1.2
