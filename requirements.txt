@@ -18,14 +18,14 @@ timm>=0.9.0
 
 # Pretrained models
 facenet-pytorch==2.5.2
-ultralytics>=8.0.0  # YOLOv8 latest (flexible version)
+ultralytics>=8.0.0,<8.1.0  # YOLOv8 (versions 8.0.x require Python <=3.11, which matches our runtime.txt)
 deep-sort-realtime  # DeepSORT tracking (no version constraint - let pip find compatible version)
 transformers==4.35.2  # For Mask2Former (optional - can be disabled if needed)
 
 # Database
-SQLAlchemy==2.1.2
-pymysql==1.1.1
-psycopg2-binary==2.9.9
+SQLAlchemy>=2.0.0,<2.1.0  # Use stable 2.0.x version (2.1.2 doesn't exist)
+pymysql>=1.0.0
+psycopg2-binary>=2.9.0
 
 # Optional / GAN / enhancement
 torchmetrics==1.3.1  # sometimes needed for SRGAN/Zero-DCE
