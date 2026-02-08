@@ -19,7 +19,7 @@ timm>=0.9.0
 # Pretrained models
 facenet-pytorch==2.5.2
 ultralytics>=8.0.0  # YOLOv8 latest (flexible version)
-deep-sort-realtime>=1.2.0  # DeepSORT tracking (alternative package name)
+deep-sort-realtime  # DeepSORT tracking (no version constraint - let pip find compatible version)
 transformers==4.35.2  # For Mask2Former (optional - can be disabled if needed)
 
 # Database
