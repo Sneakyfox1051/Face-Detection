@@ -6,10 +6,10 @@ jinja2==3.1.2
 
 # Video and image processing
 opencv-python-headless==4.8.1.78  # Headless version for server deployment
-numpy==1.26.5
-Pillow==10.1.0
-scipy==1.12.1
-shapely==2.0.3
+numpy==1.26.4  # Compatible with Python 3.11
+Pillow>=10.0.0
+scipy>=1.10.0
+shapely>=2.0.0
 
 # Deep learning
 torch==2.2.1
